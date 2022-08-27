@@ -1,0 +1,7 @@
+# Default ignored files
+# .idea整个文件夹,要注意的是这个是相对路径，也就是.ignore文件和.idea文件夹同一级目录
+*.iws
+*.iml
+*.ipr
+.idea
+/*/target
