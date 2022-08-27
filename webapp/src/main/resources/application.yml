@@ -1,0 +1,82 @@
+server:
+  port: 8093
+  servlet:
+    context-path: /shop
+
+spring:
+  profiles:
+    active: @profile.evn@
+  jpa:
+    database: mysql
+    show-sql: true
+    # generate-ddl: true
+    #设置数据库方言  记住必须要使用 MySQL5InnoDBDialect 指定数据库类型对应InnoDB  ;如果使用MySQLDialect 则对应的是MyISAM
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  datasource:
+    druid:
+      spy:
+        driver-class-name: com.mysql.jdbc.Driver
+        username: @env.mysql.spy.username@
+        password: @env.mysql.spy.password@
+        url: @env.mysql.spy.url@
+        initialSize: @env.mysql.spy.initialSize@
+        minIdle: @env.mysql.spy.minIdle@
+        maxActive: @env.mysql.spy.maxActive@
+        maxWait: @env.mysql.spy.maxWait@
+        removeAbandoned: @env.mysql.spy.removeAbandoned@
+        removeAbandonedTimeout: @env.mysql.spy.removeAbandonedTimeout@
+        timeBetweenEvictionRunsMillis: @env.mysql.spy.timeBetweenEvictionRunsMillis@
+        minEvictableIdleTimeMillis: @env.mysql.spy.minEvictableIdleTimeMillis@
+        validationQuery: @env.mysql.spy.validationQuery@
+        testWhileIdle: @env.mysql.spy.testWhileIdle@
+        testOnBorrow: @env.mysql.spy.testOnBorrow@
+        testOnReturn: @env.mysql.spy.testOnReturn@
+        poolPreparedStatements: @env.mysql.spy.poolPreparedStatements@
+        maxPoolPreparedStatementPerConnectionSize: @env.mysql.spy.maxPoolPreparedStatementPerConnectionSize@
+        filters: @env.mysql.spy.filters@
+        logSlowSql: @env.mysql.spy.logSlowSql@
+      console:
+        driver-class-name: com.mysql.jdbc.Driver
+        username: @env.mysql.console.username@
+        password: @env.mysql.console.password@
+        url: @env.mysql.console.url@
+        initialSize: @env.mysql.console.initialSize@
+        minIdle: @env.mysql.console.minIdle@
+        maxActive: @env.mysql.console.maxActive@
+        maxWait: @env.mysql.console.maxWait@
+        removeAbandoned: @env.mysql.console.removeAbandoned@
+        removeAbandonedTimeout: @env.mysql.console.removeAbandonedTimeout@
+        timeBetweenEvictionRunsMillis: @env.mysql.console.timeBetweenEvictionRunsMillis@
+        minEvictableIdleTimeMillis: @env.mysql.console.minEvictableIdleTimeMillis@
+        validationQuery: @env.mysql.console.validationQuery@
+        testWhileIdle: @env.mysql.console.testWhileIdle@
+        testOnBorrow: @env.mysql.console.testOnBorrow@
+        testOnReturn: @env.mysql.console.testOnReturn@
+        poolPreparedStatements: @env.mysql.console.poolPreparedStatements@
+        maxPoolPreparedStatementPerConnectionSize: @env.mysql.console.maxPoolPreparedStatementPerConnectionSize@
+        filters: @env.mysql.console.filters@
+        logSlowSql: @env.mysql.console.logSlowSql@
+  redis:
+    host: @env.redis.host@
+    port: @env.redis.port@
+    password:
+  rabbitmq:
+    host: @env.rabbit.host@
+    port: @env.rabbit.port@
+    username: @env.rabbit.username@
+    password: @env.rabbit.password@
+
+shop:
+  logs:
+    path: @env.shop.logs.path@
+  container:
+    name: ${HOSTNAME:default}
+  file:
+    tepPath: @env.shop.file.temp@
+    bucketName: @env.shop.file.bucketName@
+
+es:
+  host: @env.es.host@
+  port: @env.es.port@
+  alals: @env.es.alals@

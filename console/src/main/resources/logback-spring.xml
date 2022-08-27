@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60000">
+
+    <!-- 文件输出格式 -->
+    <!-- 格式化输出：% d 表示日期，% thread 表示线程名，%-5level：级别从左显示 5 个字符宽度 % msg：日志消息，% n 是换行符 -->
+    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{50}[%F:%L] - %msg%n"/>
+    <!-- log文件路径 -->
+    <!--<property name="LOG_PATH" value="/logs/shop"/>-->
+
+    <springProperty scope="context" name="LOG_PATH" source="shop.console.logs.path"/>
+    <springProperty scope="context" name="containerName" source="shop.console.container.name"/>
+    <contextName>${containerName}</contextName>
+
+
+    <!-- 开发环境 -->
+    <springProfile name="dev">
+        <appender name="DEV_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+            <!-- 文件路径 -->
+            <file>${LOG_PATH}/shopdev.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 文件名称 -->
+                <fileNamePattern>${LOG_PATH}/shopdev-%d{yyyy-MM-dd-HH}.log.zip</fileNamePattern>
+                <totalSizeCap>100GB</totalSizeCap>
+            </rollingPolicy>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <!--异步输出-->
+        <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+            <discardingThreshold>0</discardingThreshold>
+            <queueSize>256</queueSize>
+            <appender-ref ref="DEV_FILE"/>
+            <includeCallerData>true</includeCallerData>
+        </appender>
+    </springProfile>
+
+    <!-- 测试环境 -->
+    <springProfile name="stg">
+        <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+            <discriminator class="ch.qos.logback.classic.sift.ContextBasedDiscriminator">
+                <defaultValue>unknown</defaultValue>
+            </discriminator>
+            <sift>
+                <appender name="PRD_FILE_${contextName}"
+                          class="ch.qos.logback.core.rolling.RollingFileAppender">
+                    <file>${LOG_PATH}/shopprd_${contextName}.log</file>
+                    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>
+                            ${LOG_PATH}/%d{yyyy-MM-dd,aux}/shopstg_${contextName}-%d{yyyy-MM-dd-HH}.log.zip
+                        </fileNamePattern>
+                        <!-- 文件最大保存历史数量 -->
+                        <maxHistory>60</maxHistory>
+                        <totalSizeCap>100GB</totalSizeCap>
+                    </rollingPolicy>
+                    <layout class="ch.qos.logback.classic.PatternLayout">
+                        <pattern>${PATTERN}</pattern>
+                    </layout>
+                </appender>
+            </sift>
+        </appender>
+
+        <!--异步输出-->
+        <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+            <discardingThreshold>0</discardingThreshold>
+            <queueSize>512</queueSize>
+            <appender-ref ref="SIFT"/>
+            <includeCallerData>true</includeCallerData>
+        </appender>
+    </springProfile>
+
+
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.tomcat.util.net" level="debug"/>
+    <logger name="com.myself" level="debug"/>
+    <logger name="com.myself.spy.dao" level="debug"></logger>
+    <logger name="com.myself.console.dao" level="debug"></logger>
+    <root level="info">
+        <!--为了在docker里面查询方便-->
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC"/>
+    </root>
+</configuration>
